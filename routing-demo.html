@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>에너지솔루션 상담신청 분기 구조 개선 시안</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #1D9E75;
+    --teal-dk: #0F6E56;
+    --teal-lt: #E1F5EE;
+    --gray-50: #F7F8F8;
+    --gray-100: #EFEFEF;
+    --gray-200: #D9D9D9;
+    --gray-400: #A0A0A0;
+    --gray-600: #6B6B6B;
+    --gray-900: #1A1A1A;
+    --green-lt: #EAF3DE;
+    --green-dk: #3B6D11;
+  }
+
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--gray-50);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 1rem 4rem;
+    color: var(--gray-900);
+  }
+
+  .page-header { max-width: 760px; width: 100%; margin-bottom: 2rem; }
+  .page-eyebrow { font-size: 12px; color: var(--teal-dk); font-weight: 600; letter-spacing: .06em; margin-bottom: 6px; }
+  .page-title { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+  .page-sub { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+
+  .compare-wrap { max-width: 760px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 2.5rem; }
+  @media (max-width: 700px) { .compare-wrap { grid-template-columns: 1fr; } }
+  .compare-card { background: #fff; border: 1px solid var(--gray-100); border-radius: 12px; padding: 1.25rem; }
+  .compare-card.bad { border-color: #F0997B; background: #FAECE7; }
+  .compare-card.good { border-color: var(--teal); background: var(--teal-lt); }
+  .compare-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-bottom: 10px; }
+  .compare-card.bad .compare-tag { background: #F0997B; color: #4A1B0C; }
+  .compare-card.good .compare-tag { background: var(--teal); color: #fff; }
+  .compare-text { font-size: 13px; line-height: 1.6; color: var(--gray-900); }
+
+  .demo-frame {
+    background: var(--gray-100);
+    border-radius: 16px;
+    padding: 2.5rem 1.5rem;
+    max-width: 640px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .demo-card-wrap { width: 100%; max-width: 480px; }
+  .demo-eyebrow { font-size: 12px; color: var(--gray-400); margin-bottom: 8px; }
+  .demo-card { background: #fff; border: 1px solid var(--gray-100); border-radius: 12px; padding: 1.75rem 1.5rem; }
+  .demo-h { font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+  .demo-sub { font-size: 13px; color: var(--gray-600); margin-bottom: 1.5rem; }
+  .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .demo-opt { border: 1px solid var(--gray-200); border-radius: 10px; padding: 1.25rem 1rem; cursor: pointer; transition: all .15s; text-align: center; background: #fff; }
+  .demo-opt:hover { border-color: var(--teal); background: var(--teal-lt); }
+  .demo-opt .icon { font-size: 26px; margin-bottom: 10px; }
+  .demo-opt .ot { font-size: 14px; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; }
+  .demo-opt .od { font-size: 12px; color: var(--gray-400); }
+
+  .back-btn { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gray-600); cursor: pointer; margin-bottom: 1rem; width: fit-content; }
+  .back-btn:hover { color: var(--gray-900); }
+
+  .badge-step { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--teal); color: #fff; font-size: 10px; font-weight: 700; margin-right: 6px; }
+
+  .success-box { text-align: center; padding: 2.5rem 1.5rem; }
+  .success-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--green-lt); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 24px; color: var(--green-dk); }
+
+  .footer-note { max-width: 760px; width: 100%; margin-top: 2.5rem; padding: 1.25rem 1.5rem; background: #fff; border: 1px solid var(--gray-100); border-radius: 12px; font-size: 12px; color: var(--gray-600); line-height: 1.7; }
+  .footer-note strong { color: var(--gray-900); }
+
+  @media (max-width: 600px) {
+    body { padding: 1.5rem .75rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <p class="page-eyebrow">DEMO — 에너지솔루션 상담신청 분기 구조</p>
+  <p class="page-title">문의하기 경로 전용 2단계 분기 선택 시안</p>
+  <p class="page-sub">아래 카드는 클릭 가능한 실제 동작 데모입니다. "직접PPA" → "발전사업자/전력 수요기업" 순서로 분기되는 흐름을 확인해 주세요.</p>
+</div>
+
+<div class="compare-wrap">
+  <div class="compare-card bad">
+    <span class="compare-tag">AS-IS</span>
+    <p class="compare-text">발전소PPA · 수요기업PPA · VPP를 같은 줄의 탭 3개로 배치 — PPA와 VPP 용어를 모르는 사용자는 선택 기준이 없음</p>
+  </div>
+  <div class="compare-card good">
+    <span class="compare-tag">TO-BE</span>
+    <p class="compare-text">1차로 PPA/VPP를 묻고, PPA를 고른 사용자에게만 2차로 발전사업자/수요기업을 물음 — 역할만 알면 도달 가능</p>
+  </div>
+</div>
+
+<div class="demo-frame">
+  <div class="demo-card-wrap">
+
+    <div id="step1">
+      <p class="demo-eyebrow">문의하기 &gt; 에너지솔루션 상담하기</p>
+      <div class="demo-card">
+        <p class="demo-h">어떤 상담이 필요하신가요?</p>
+        <p class="demo-sub">두 가지 사업 중 하나를 선택해 주세요</p>
+        <div class="demo-grid">
+          <div class="demo-opt" onclick="goStep2()">
+            <div class="icon">🔌</div>
+            <div class="ot">직접PPA</div>
+            <div class="od">전력구매계약</div>
+          </div>
+          <div class="demo-opt" onclick="goVpp()">
+            <div class="icon">🔗</div>
+            <div class="ot">VPP</div>
+            <div class="od">가상발전소 · 전력중개</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="step2" style="display:none">
+      <div class="back-btn" onclick="goStep1()">&larr; 이전</div>
+      <p class="demo-eyebrow"><span class="badge-step">2</span>직접PPA 상담</p>
+      <div class="demo-card">
+        <p class="demo-h">어느 쪽에 해당하시나요?</p>
+        <p class="demo-sub">발전사업자이신지, 전력을 구매하실 기업이신지 알려주세요</p>
+        <div class="demo-grid">
+          <div class="demo-opt" onclick="goForm('발전사업자')">
+            <div class="icon">☀️</div>
+            <div class="ot">발전사업자</div>
+            <div class="od">전력 공급 · 발전소 보유</div>
+          </div>
+          <div class="demo-opt" onclick="goForm('전력 수요기업')">
+            <div class="icon">🏭</div>
+            <div class="ot">전력 수요기업</div>
+            <div class="od">RE100 이행 · 전력 구매</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="step3" style="display:none">
+      <div class="back-btn" onclick="goBack()">&larr; 이전</div>
+      <div class="demo-card success-box">
+        <div class="success-icon">✓</div>
+        <p class="demo-h" id="form-title">전용 폼으로 이동합니다</p>
+        <p class="demo-sub" style="margin-bottom:0">탭 선택 없이 해당 상담 폼이 바로 표시됩니다 (실제 구현 시 해당 폼 페이지로 연결)</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer-note">
+  <strong>참고:</strong> 사업소개 페이지(직접PPA 섹션, VPP 섹션) 내 상담신청 버튼은 이 분기 화면을 거치지 않고 이미 맥락이 있는 상태이므로 각 전용 폼으로 바로 연결됩니다. 위 분기 화면은 <strong>문의하기 → 에너지솔루션 상담하기</strong> 경로로 진입했을 때만 노출됩니다.
+</div>
+
+<script>
+function goStep1(){
+  document.getElementById('step1').style.display='';
+  document.getElementById('step2').style.display='none';
+  document.getElementById('step3').style.display='none';
+}
+function goStep2(){
+  document.getElementById('step1').style.display='none';
+  document.getElementById('step2').style.display='';
+  document.getElementById('step3').style.display='none';
+}
+function goBack(){
+  if (lastFrom === 'vpp') { goStep1(); } else { goStep2(); }
+}
+var lastFrom = '';
+function goForm(type){
+  lastFrom = 'ppa';
+  document.getElementById('step2').style.display='none';
+  document.getElementById('step3').style.display='';
+  document.getElementById('form-title').textContent = '직접PPA ' + type + ' 폼으로 이동합니다';
+}
+function goVpp(){
+  lastFrom = 'vpp';
+  document.getElementById('step1').style.display='none';
+  document.getElementById('step3').style.display='';
+  document.getElementById('form-title').textContent = 'VPP 발전사업자 폼으로 이동합니다';
+}
+</script>
+</body>
+</html>
